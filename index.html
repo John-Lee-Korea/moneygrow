@@ -816,6 +816,25 @@ function showResult() {
   }));
 }
 function restart(){startQuiz();}
+
+// ── iframe 높이 자동 조절 ──
+// 부모 페이지(티스토리)에 현재 콘텐츠 높이를 전달
+function sendHeight() {
+  const height = document.body.scrollHeight;
+  window.parent.postMessage({ type: 'iframeHeight', height: height }, '*');
+}
+
+// 화면 전환마다 높이 전송
+const _origShowScreen = showScreen;
+function showScreen(id) {
+  _origShowScreen(id);
+  setTimeout(sendHeight, 100);
+  setTimeout(sendHeight, 400); // 애니메이션 끝난 후 한 번 더
+}
+
+// 초기 로드 시 전송
+window.addEventListener('load', sendHeight);
+window.addEventListener('resize', sendHeight);
 </script>
 </body>
 </html>
